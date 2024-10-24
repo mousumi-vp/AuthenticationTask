@@ -2,7 +2,7 @@
 
 namespace AuthenticationTask.Identity
 {
-    public class ApplicationRole:IdentityRole<Guid>
+    public class ApplicationRole : IdentityRole<Guid>
     {
 
     }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthenticationTask.DbContext
+namespace AuthenticationTask.DatabaseContext
 {
     public class ApplicationDbContext:IdentityDbContext<ApplicationUser,ApplicationRole,Guid>
     {

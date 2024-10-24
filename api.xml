@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AuthenticationTask</name>
+    </assembly>
+    <members>
+        <member name="M:AuthenticationTask.Controllers.WeatherForecastController.Get">
+            <summary>
+            To get the weather forcast of different cities
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

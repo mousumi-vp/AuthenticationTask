@@ -1,5 +1,7 @@
 ﻿using AuthenticationTask.DTO;
 using AuthenticationTask.Identity;
+using AuthenticationTask.ServiceContracts;
+using AuthenticationTask.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,13 +17,16 @@ namespace AuthenticationTask.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IJwtService _jwtService;
+
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<ApplicationRole> roleManager)
+            RoleManager<ApplicationRole> roleManager, IJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _jwtService = jwtService;
         }
         [HttpPost("register")]
         public async Task<ActionResult<ApplicationUser>> PostResister(RegisterDTO registerDTO)
@@ -42,11 +47,14 @@ namespace AuthenticationTask.Controllers
                 PersonName = registerDTO.PhoneNumber
             };
             IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
-
+           
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                return Ok();
+                var authenticationResponce = _jwtService.CreateTwtToken(user);
+                
+                
+                return Ok(authenticationResponce);
             }
             else
             {
@@ -55,6 +63,7 @@ namespace AuthenticationTask.Controllers
                 return Problem(errorMessage);
             }
         }
+        [HttpGet]
         public async Task<IActionResult> IsEmailAlreadyRegister(string email)
         {
             ApplicationUser? user = await _userManager.FindByNameAsync(email);
@@ -93,7 +102,10 @@ namespace AuthenticationTask.Controllers
                 }
                 else
                 {
-                    return Ok(new { personName = user.PersonName, email = user.UserName });
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    var authenticationResponce = _jwtService.CreateTwtToken(user);
+
+                    return Ok(authenticationResponce);
                 }
 
             }
